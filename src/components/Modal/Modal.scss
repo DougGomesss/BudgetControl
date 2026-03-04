@@ -1,0 +1,98 @@
+.backgroundStyle {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+
+  .modalStyle {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: max-content;
+    width: 25%;
+    min-width: 400px;
+    background-color: #64748b;
+    border: 2px #324154 solid;
+    border-radius: 20px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 25px 0 25px;
+      color: white;
+      font-size: 20px;
+    }
+
+    form {
+      padding: 10px 25px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      padding: 15px 25px 25px 25px;
+      color: white;
+      font-size: 16px;
+      button {
+        border: solid 1px black;
+        border-radius: 20px;
+        width: 30%;
+        box-shadow: 1px 1px 1px 1px black;
+        margin-top: 20px;
+        &:hover {
+          transform: scale(1.2);
+          background-color: #324154;
+        }
+        &:disabled {
+          background-color: #32415415;
+          transform: scale(1);
+        }
+      }
+    }
+  }
+
+  .grupo-flutuante {
+    position: relative;
+    width: 100%;
+    margin-top: 1.5rem;
+
+    .input-branco {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 0;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid #ffffff;
+      outline: none;
+
+      &:focus ~ .label-branco,
+      &:not(:placeholder-shown) ~ .label-branco {
+        transform: translateY(-1.5rem) scale(0.85);
+        color: #ffffff;
+      }
+    }
+
+    .label-branco {
+      position: absolute;
+      top: 0.5rem;
+      left: 0;
+      font-size: 16px;
+      color: #ffffff;
+      pointer-events: none;
+      transform-origin: left top;
+      transition:
+        transform 0.3s ease-in-out,
+        color 0.3s ease-in-out;
+    }
+  }
+}
