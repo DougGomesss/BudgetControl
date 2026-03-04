@@ -1,50 +1,46 @@
-# React + TypeScript + Vite
+# FamilyBudget - Controle de Gastos Residenciais
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto é um sistema para gerenciamento de finanças domésticas, permitindo o controle de pessoas, categorias de despesas/receitas e o registro detalhado de transações financeiras.
 
-Currently, two official plugins are available:
+## 📋 Proposta do Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+O objetivo é desenvolver uma aplicação Full Stack (React + .NET) que resolva o problema de organização de gastos em uma residência, garantindo a integridade dos dados e aplicando regras de negócio específicas para cada funcionalidade.
 
-## Expanding the ESLint configuration
+## 🚀 Funcionalidades Principais
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 1. Cadastro de Pessoas
 
-- Configure the top-level `parserOptions` property like this:
+Gerenciamento completo (CRUD) de moradores ou pessoas vinculadas aos gastos.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Campos:** Identificador único (auto), Nome (máx. 200 caracteres) e Idade.
+- **Regra de Negócio:** Ao deletar uma pessoa, todas as transações vinculadas a ela devem ser removidas em cascata.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 2. Cadastro de Categorias
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Classificação dos tipos de gastos ou ganhos.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Campos:** Identificador único (auto), Descrição (máx. 400 caracteres) e Finalidade.
+- **Opções de Finalidade:** Despesa, Receita ou Ambas.
+
+### 3. Cadastro de Transações
+
+Registro dos movimentos financeiros.
+
+- **Campos:** Identificador único (auto), Descrição (máx. 400 caracteres), Valor (numérico positivo), Tipo (Despesa/Receita), Categoria e Pessoa.
+- **Regras de Negócio:**
+  - **Restrição de Idade:** Se a pessoa for menor de idade (menor de 18 anos), o sistema deve permitir apenas o registro de **Despesas**.
+  - **Filtro de Categoria:** A categoria selecionada deve ser compatível com o tipo de transação (ex: não permitir categoria de 'Receita' em uma transação de 'Despesa').
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Frontend:** React.js com TypeScript e Vite.
+- **Estilização:** Tailwind CSS e SASS (SCSS) para componentes customizados.
+- **Componentes:** Lucide React (ícones), React-Toastify (notificações) e FontAwesome.
+- **Gerenciamento de Estado:** React Hooks (useState, useRef, useEffect).
+- **Backend (Projetado):** C# com .NET 9 e Entity Framework Core.
+
+## ⚙️ Comandos do Projeto
+
+O projeto utiliza o `generate-react-cli` para padronização de componentes:
+
+- Criar novo componente: `npx grc component NomeDoComponente`
