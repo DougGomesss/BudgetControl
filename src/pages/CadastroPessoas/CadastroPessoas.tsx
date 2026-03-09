@@ -1,40 +1,24 @@
-import { Pencil, Trash } from "lucide-react";
+import { ArrowBigLeft, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import { toast } from "react-toastify";
 import Listagem from "../../components/Listagem/Listagem";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 function CadastroPessoas() {
   const [pessoas, setLista] = useState<InfoPessoas[]>([
-    {
-      id: 1,
-      nome: "Jose",
-      idade: 5,
-    },
-
-    {
-      id: 2,
-      nome: "Andre",
-      idade: 18,
-    },
-
-    {
-      id: 3,
-      nome: "Douglas",
-      idade: 22,
-    },
+    { id: 1, nome: "Jose", idade: 5 },
+    { id: 2, nome: "Andre", idade: 18 },
+    { id: 3, nome: "Douglas", idade: 22 },
   ]);
 
   const [isOpen, setOpenModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [exibirLista, setExibirLista] = useState(true);
-  const [editarLista, setEditarLista] = useState<InfoPessoas | null>();
-  const removerItem = (id: number) => {
-    const novaLista = pessoas.filter((x) => x.id != id);
+  const [editarLista, setEditarLista] = useState<InfoPessoas | null>(null);
 
-    setLista(novaLista);
+  const removerItem = (id: number) => {
+    setLista((prev) => prev.filter((x) => x.id !== id));
   };
 
   const editarItem = (item: InfoPessoas) => {
@@ -43,68 +27,72 @@ function CadastroPessoas() {
   };
 
   function retornandoEstado() {
+    setOpenModal(!isOpen);
     setEditarLista(null);
-    setOpenModal(false);
   }
 
-  function editar(editar: InfoPessoas) {
-    console.log(editar);
-    const x = () => new Promise((x) => setTimeout(x, 2000));
+  function editar(itemParaEditar: InfoPessoas) {
+    const x = () => new Promise((resolve) => setTimeout(resolve, 2000));
 
-    toast.promise(x, {
-      pending: {
-        render(x) {
-          setLoading(true);
-          return "I'm loading";
+    toast
+      .promise(x, {
+        pending: {
+          render() {
+            setLoading(true);
+            return "Editando cadastro...";
+          },
+          icon: false,
         },
-        icon: false,
-      },
-      success: {
-        render() {
-          setLoading(false);
-          return "Cadastro feito com sucesso!";
+        success: {
+          render() {
+            setLoading(false);
+            return "Cadastro atualizado!";
+          },
         },
-      },
-      error: {
-        render() {
-          setLoading(false);
-          return "Cadastro Rejeitado! 🤯";
-        },
-      },
-    });
+        error: "Erro ao editar! 🤯",
+      })
+      .then(() => {
+        setLista((prev) =>
+          prev.map((p) => (p.id === itemParaEditar.id ? itemParaEditar : p)),
+        );
+      });
   }
 
-  function cadastro(cadastro: InfoPessoas) {
-    const x = () => new Promise((x) => setTimeout(x, 2000));
-
-    toast.promise(x, {
-      pending: {
-        render(x) {
-          setLoading(true);
-          return "I'm loading";
-        },
-        icon: false,
-      },
-      success: {
-        render() {
-          setLoading(false);
-          return "Success";
-        },
-      },
-      error: {
-        render() {
-          setLoading(false);
-          return "Cadastro Rejeitado! 🤯";
-        },
-      },
-    });
-
-    const validacaoDeId = pessoas.filter((x) => cadastro.id != x.id);
-
-    if (validacaoDeId) {
-      const novoArray = [...pessoas, cadastro];
-      setLista(novoArray);
+  function cadastro(dadosNovos: InfoPessoas) {
+    console.log(`Dados novos: ` + dadosNovos);
+    let maiorId = 0;
+    for (let i = 0; i < pessoas.length; i++) {
+      if (pessoas[i].id > maiorId) {
+        maiorId = pessoas[i].id;
+      }
     }
+    const novoId = maiorId + 1;
+    const pessoaComNovoId = { ...dadosNovos, id: novoId };
+    const atualizarLista = () => {
+      setLista((prev) => [...prev, pessoaComNovoId]);
+      setLoading(false);
+    };
+
+    const x = () => new Promise((resolve) => setTimeout(resolve, 2000));
+
+    toast
+      .promise(x, {
+        pending: {
+          render() {
+            setLoading(true);
+            return "Cadastrando...";
+          },
+          icon: false,
+        },
+        success: {
+          render() {
+            setLoading(false);
+            return "Cadastrado com sucesso!";
+          },
+        },
+        error: "Erro ao cadastrar! 🤯",
+      })
+      .then(atualizarLista);
   }
 
   return (
@@ -112,42 +100,53 @@ function CadastroPessoas() {
       <h1 className="text-3xl text-slate-100 font-bold text-center">
         Cadastro de pessoas
       </h1>
-      <div className="flex gap-5 mt-5 ">
-        <button
-          onClick={() => setOpenModal(true)}
-          className="bg-slate-700  text-white p-2 rounded-md"
-        >
-          Criação
-        </button>
-        <Modal
-          titulo="de pessoas"
-          isOpen={isOpen}
-          items={editarLista}
-          isLoading={isLoading}
-          onClose={() => retornandoEstado()}
-          SalvarCadastroEdicao={(x) => {
-            {
-              editarLista ? editar(editarLista) : cadastro(x);
-            }
-          }}
-        ></Modal>
-        <button
-          onClick={() => {
-            setExibirLista(!exibirLista);
-          }}
-          className="bg-slate-700 text-white p-2 rounded-md"
-        >
-          Listagem
+      <div className="flex justify-between text-center mt-5">
+        <div className="flex gap-5">
+          <button
+            onClick={() => setOpenModal(true)}
+            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
+          >
+            Criação
+          </button>
+          <Modal
+            titulo="de pessoas"
+            isOpen={isOpen}
+            items={editarLista}
+            isLoading={isLoading}
+            onClose={() => retornandoEstado()}
+            SalvarCadastroEdicao={(x) => {
+              editarLista ? editar(x) : cadastro(x);
+            }}
+          />
+          <button
+            onClick={() => setExibirLista(!exibirLista)}
+            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
+          >
+            Listagem
+          </button>
+        </div>
+        <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
+          <Link to={"/"}>
+            {" "}
+            <ArrowBigLeft />
+          </Link>
         </button>
       </div>
+
       <div>
         {pessoas.map((x) => (
           <Listagem key={x.id} textoPrincipal={x.nome} exibir={exibirLista}>
-            <button onClick={() => editarItem(x)}>
-              <Pencil></Pencil>
+            <button
+              onClick={() => editarItem(x)}
+              className="hover:scale-110 transition-transform"
+            >
+              <Pencil size={18} />
             </button>
-            <button onClick={() => removerItem(x.id)}>
-              <Trash></Trash>
+            <button
+              onClick={() => removerItem(x.id)}
+              className="hover:scale-110 transition-transform text-red-400"
+            >
+              <Trash size={18} color="black" />
             </button>
           </Listagem>
         ))}
@@ -162,9 +161,4 @@ export interface InfoPessoas {
   id: number;
   nome: string;
   idade: number;
-}
-
-export interface Github {
-  avatar_url: string;
-  login: string;
 }
