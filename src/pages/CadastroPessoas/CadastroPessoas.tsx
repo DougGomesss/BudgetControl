@@ -1,5 +1,5 @@
 import { ArrowBigLeft, Pencil, Trash } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import { toast } from "react-toastify";
 import Listagem from "../../components/Listagem/Listagem";
@@ -10,12 +10,18 @@ function CadastroPessoas() {
     { id: 1, nome: "Jose", idade: 5 },
     { id: 2, nome: "Andre", idade: 18 },
     { id: 3, nome: "Douglas", idade: 22 },
+    { id: 5, nome: "Jose", idade: 5 },
+    { id: 6, nome: "Jose", idade: 5 },
+    { id: 7, nome: "Andre", idade: 18 },
   ]);
 
   const [isOpen, setOpenModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [exibirLista, setExibirLista] = useState(true);
   const [editarLista, setEditarLista] = useState<InfoPessoas | null>(null);
+
+  const nomeRef = useRef<HTMLInputElement>(null);
+  const idadeRef = useRef<HTMLInputElement>(null);
 
   const removerItem = (id: number) => {
     setLista((prev) => prev.filter((x) => x.id !== id));
@@ -31,7 +37,12 @@ function CadastroPessoas() {
     setEditarLista(null);
   }
 
-  function editar(itemParaEditar: InfoPessoas) {
+  function editar() {
+    const itemParaEditar: InfoPessoas = {
+      id: editarLista!.id,
+      nome: nomeRef.current!.value,
+      idade: idadeRef.current!.valueAsNumber,
+    };
     const x = () => new Promise((resolve) => setTimeout(resolve, 2000));
 
     toast
@@ -58,8 +69,13 @@ function CadastroPessoas() {
       });
   }
 
-  function cadastro(dadosNovos: InfoPessoas) {
-    console.log(`Dados novos: ` + dadosNovos);
+  function cadastro() {
+    const dadosNovos: InfoPessoas = {
+      id: 0,
+      nome: nomeRef.current!.value,
+      idade: idadeRef.current!.valueAsNumber,
+    };
+
     let maiorId = 0;
     for (let i = 0; i < pessoas.length; i++) {
       if (pessoas[i].id > maiorId) {
@@ -69,7 +85,7 @@ function CadastroPessoas() {
     const novoId = maiorId + 1;
     const pessoaComNovoId = { ...dadosNovos, id: novoId };
     const atualizarLista = () => {
-      setLista((prev) => [...prev, pessoaComNovoId]);
+      setLista([...pessoas, pessoaComNovoId]);
       setLoading(false);
     };
 
@@ -114,10 +130,46 @@ function CadastroPessoas() {
             items={editarLista}
             isLoading={isLoading}
             onClose={() => retornandoEstado()}
-            SalvarCadastroEdicao={(x) => {
-              editarLista ? editar(x) : cadastro(x);
+            SalvarCadastroEdicao={() => {
+              editarLista ? editar() : cadastro();
             }}
-          />
+          >
+            <form
+              className="flex flex-col gap-2 p-4"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <div className="flex flex-col gap-4 w-full">
+                <div className="grupo-flutuante">
+                  <input
+                    ref={nomeRef}
+                    type="text"
+                    id="nome"
+                    className="input-branco"
+                    placeholder=" "
+                    required
+                    defaultValue={!!editarLista ? editarLista.nome : ""}
+                  />
+                  <label htmlFor="nome" className="label-branco">
+                    Nome Completo
+                  </label>
+                </div>
+                <div className="grupo-flutuante">
+                  <input
+                    ref={idadeRef}
+                    type="number"
+                    id="idade"
+                    className="input-branco"
+                    placeholder=" "
+                    required
+                    defaultValue={!!editarLista ? editarLista.idade : ""}
+                  />
+                  <label htmlFor="idade" className="label-branco">
+                    Idade
+                  </label>
+                </div>
+              </div>
+            </form>
+          </Modal>
           <button
             onClick={() => setExibirLista(!exibirLista)}
             className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
@@ -133,7 +185,7 @@ function CadastroPessoas() {
         </button>
       </div>
 
-      <div>
+      <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
         {pessoas.map((x) => (
           <Listagem key={x.id} textoPrincipal={x.nome} exibir={exibirLista}>
             <button
