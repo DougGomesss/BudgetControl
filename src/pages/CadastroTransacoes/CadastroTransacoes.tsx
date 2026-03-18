@@ -1,33 +1,34 @@
-import { ArrowBigLeft, Trash } from "lucide-react";
+import { ArrowBigLeft, LogOut, Trash } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Listagem from "../../components/Listagem/Listagem";
 import Modal from "../../components/Modal/Modal";
 import Dropdown from "../../components/Dropdown/Dropdown";
+import Blankstate from "../../components/Blankstate/Blankstate";
 
 function CadastroTransacoes() {
   const [transacoes, setTransacoes] = useState<InfoTransacoes[]>([
-    {
-      id: 1,
-      descricao: "Categoria 1",
-      valor: 55,
-      categoria: "Despesa 1",
-      pessoa: "ts",
-    },
-    {
-      id: 2,
-      descricao: "Categoria 2",
-      valor: 55,
-      categoria: "Despesa 2",
-      pessoa: "ts",
-    },
-    {
-      id: 3,
-      descricao: "Categoria 3",
-      valor: 55,
-      categoria: "Despesa 3",
-      pessoa: "ts",
-    },
+    // {
+    //   id: 1,
+    //   descricao: "Categoria 1",
+    //   valor: 55,
+    //   categoria: "Despesa 1",
+    //   pessoa: "ts",
+    // },
+    // {
+    //   id: 2,
+    //   descricao: "Categoria 2",
+    //   valor: 55,
+    //   categoria: "Despesa 2",
+    //   pessoa: "ts",
+    // },
+    // {
+    //   id: 3,
+    //   descricao: "Categoria 3",
+    //   valor: 55,
+    //   categoria: "Despesa 3",
+    //   pessoa: "ts",
+    // },
   ]);
   const [exibirLista, setExibirLista] = useState(true);
   const [isOpen, setOpenModal] = useState(false);
@@ -96,17 +97,17 @@ function CadastroTransacoes() {
                   </label>
                 </div>
                 <div className="flex mt-5">
-                  <Dropdown items={[]}></Dropdown>
+                  <Dropdown
+                    onChange={() => null}
+                    descricaoModal={["Tipo", "Pessoas"]}
+                    items={transacoes}
+                    itemsModal={["Despesa", "Receita"]}
+                  ></Dropdown>
+                  <div className="Categorias"></div>
                 </div>
               </div>
             </form>
           </Modal>
-          <button
-            onClick={() => setExibirLista(!exibirLista)}
-            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
-          >
-            Listagem
-          </button>
         </div>
         <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
           <Link to={"/"}>
@@ -117,12 +118,15 @@ function CadastroTransacoes() {
       </div>
 
       <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
+        {transacoes.length === 0 && (
+          <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <Blankstate texto={`transações`}>
+              <LogOut size={50} />
+            </Blankstate>
+          </div>
+        )}
         {transacoes.map((x) => (
-          <Listagem
-            key={x.id}
-            textoPrincipal={x.descricao}
-            exibir={exibirLista}
-          ></Listagem>
+          <Listagem key={x.id} textoPrincipal={x.descricao}></Listagem>
         ))}
       </div>
     </>

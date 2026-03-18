@@ -1,30 +1,76 @@
-import { ArrowBigLeft } from "lucide-react";
+import { ArrowBigLeft, Calendar } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Listagem from "../../components/Listagem/Listagem";
 import Modal from "../../components/Modal/Modal";
 import { toast } from "react-toastify";
+import Dropdown from "../../components/Dropdown/Dropdown";
+import Blankstate from "../../components/Blankstate/Blankstate";
 
 function CadastroCategorias() {
   const [categorias, setCategorias] = useState<InfoCategorias[]>([
-    {
-      id: 1,
-      descricao: "Categoria 1",
-      Finalidade: "Despesa 1",
-    },
-    {
-      id: 2,
-      descricao: "Categoria 2",
-      Finalidade: "Despesa 2",
-    },
-    {
-      id: 3,
-      descricao: "Categoria 3",
-      Finalidade: "Despesa 3",
-    },
+    // {
+    //   id: 1,
+    //   descricao: "Contas de casa",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 2,
+    //   descricao: "Contas de carro",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 3,
+    //   descricao: "Contas de celular",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 4,
+    //   descricao: "Contas de casa",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 5,
+    //   descricao: "Contas de carro",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 6,
+    //   descricao: "Contas de celular",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 7,
+    //   descricao: "Contas de casa",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 8,
+    //   descricao: "Contas de carro",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 9,
+    //   descricao: "Contas de celular",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 10,
+    //   descricao: "Contas de casa",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 11,
+    //   descricao: "Contas de carro",
+    //   Finalidade: "Despesa",
+    // },
+    // {
+    //   id: 12,
+    //   descricao: "Contas de celular",
+    //   Finalidade: "Despesa",
+    // },
   ]);
 
-  const [exibirLista, setExibirLista] = useState(true);
   const [isOpen, setOpenModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const descricao = useRef<HTMLInputElement>(null);
@@ -132,7 +178,17 @@ function CadastroCategorias() {
                   </label>
                 </div>
                 <div className="grupo-flutuante">
-                  <input
+                  {/* <select>
+                    <option>Selecione a finalidade</option>
+                    <Dropdown items={[]}></Dropdown>
+                  </select> */}
+                  <Dropdown
+                    onChange={() => null}
+                    descricaoModal={["Finalidade"]}
+                    items={categorias}
+                    itemsModal={["Despesa", "Receita", "Ambas"]}
+                  ></Dropdown>
+                  {/* <input
                     ref={finalidade}
                     type="text"
                     id="nome"
@@ -143,17 +199,11 @@ function CadastroCategorias() {
                   />
                   <label htmlFor="nome" className="label-branco">
                     Finalidade
-                  </label>
+                  </label> */}
                 </div>
               </div>
             </form>
           </Modal>
-          <button
-            onClick={() => setExibirLista(!exibirLista)}
-            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
-          >
-            Listagem
-          </button>
         </div>
         <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
           <Link to={"/"}>
@@ -164,11 +214,17 @@ function CadastroCategorias() {
       </div>
 
       <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
+        {categorias.length === 0 && (
+          <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+            <Blankstate texto={`categorias`}>
+              <Calendar size={50} />
+            </Blankstate>
+          </div>
+        )}
         {categorias.map((x) => (
           <Listagem
             key={x.id}
             textoPrincipal={`${x.descricao} - ${x.Finalidade}`}
-            exibir={exibirLista}
           ></Listagem>
         ))}
       </div>

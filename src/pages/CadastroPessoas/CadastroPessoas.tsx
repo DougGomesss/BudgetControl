@@ -1,23 +1,16 @@
-import { ArrowBigLeft, Pencil, Trash } from "lucide-react";
+import { ArrowBigLeft, Pencil, Trash, User } from "lucide-react";
 import { useRef, useState } from "react";
 import Modal from "../../components/Modal/Modal";
 import { toast } from "react-toastify";
 import Listagem from "../../components/Listagem/Listagem";
 import { Link } from "react-router-dom";
+import Blankstate from "../../components/Blankstate/Blankstate";
 
 function CadastroPessoas() {
-  const [pessoas, setLista] = useState<InfoPessoas[]>([
-    { id: 1, nome: "Jose", idade: 5 },
-    { id: 2, nome: "Andre", idade: 18 },
-    { id: 3, nome: "Douglas", idade: 22 },
-    { id: 5, nome: "Jose", idade: 5 },
-    { id: 6, nome: "Jose", idade: 5 },
-    { id: 7, nome: "Andre", idade: 18 },
-  ]);
+  const [pessoas, setLista] = useState<InfoPessoas[]>([]);
 
   const [isOpen, setOpenModal] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const [exibirLista, setExibirLista] = useState(true);
   const [editarLista, setEditarLista] = useState<InfoPessoas | null>(null);
 
   const nomeRef = useRef<HTMLInputElement>(null);
@@ -113,96 +106,103 @@ function CadastroPessoas() {
 
   return (
     <>
-      <h1 className="text-3xl text-slate-100 font-bold text-center">
-        Cadastro de pessoas
-      </h1>
-      <div className="flex justify-between text-center mt-5">
-        <div className="flex gap-5">
-          <button
-            onClick={() => setOpenModal(true)}
-            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
-          >
-            Criação
-          </button>
-          <Modal
-            titulo="de pessoas"
-            isOpen={isOpen}
-            items={editarLista}
-            isLoading={isLoading}
-            onClose={() => retornandoEstado()}
-            SalvarCadastroEdicao={() => {
-              editarLista ? editar() : cadastro();
-            }}
-          >
-            <form
-              className="flex flex-col gap-2 p-4"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <div className="flex flex-col gap-4 w-full">
-                <div className="grupo-flutuante">
-                  <input
-                    ref={nomeRef}
-                    type="text"
-                    id="nome"
-                    className="input-branco"
-                    placeholder=" "
-                    required
-                    defaultValue={!!editarLista ? editarLista.nome : ""}
-                  />
-                  <label htmlFor="nome" className="label-branco">
-                    Nome Completo
-                  </label>
-                </div>
-                <div className="grupo-flutuante">
-                  <input
-                    ref={idadeRef}
-                    type="number"
-                    id="idade"
-                    className="input-branco"
-                    placeholder=" "
-                    required
-                    defaultValue={!!editarLista ? editarLista.idade : ""}
-                  />
-                  <label htmlFor="idade" className="label-branco">
-                    Idade
-                  </label>
-                </div>
-              </div>
-            </form>
-          </Modal>
-          <button
-            onClick={() => setExibirLista(!exibirLista)}
-            className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
-          >
-            Listagem
-          </button>
-        </div>
-        <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
-          <Link to={"/"}>
-            {" "}
-            <ArrowBigLeft />
-          </Link>
-        </button>
-      </div>
+      {pessoas ? (
+        <div>
+          <h1 className="text-3xl text-slate-100 font-bold text-center">
+            Cadastro de pessoas
+          </h1>
+          <div className="flex justify-between text-center mt-5">
+            <div className="flex gap-5">
+              <button
+                onClick={() => setOpenModal(true)}
+                className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
+              >
+                Criação
+              </button>
+              <Modal
+                titulo="de pessoas"
+                isOpen={isOpen}
+                items={editarLista}
+                isLoading={isLoading}
+                onClose={() => retornandoEstado()}
+                SalvarCadastroEdicao={() => {
+                  editarLista ? editar() : cadastro();
+                }}
+              >
+                <form
+                  className="flex flex-col gap-2 p-4"
+                  onSubmit={(e) => e.preventDefault()}
+                >
+                  <div className="flex flex-col gap-4 w-full">
+                    <div className="grupo-flutuante">
+                      <input
+                        ref={nomeRef}
+                        type="text"
+                        id="nome"
+                        className="input-branco"
+                        placeholder=" "
+                        required
+                        defaultValue={!!editarLista ? editarLista.nome : ""}
+                      />
+                      <label htmlFor="nome" className="label-branco">
+                        Nome Completo
+                      </label>
+                    </div>
+                    <div className="grupo-flutuante">
+                      <input
+                        ref={idadeRef}
+                        type="number"
+                        id="idade"
+                        className="input-branco"
+                        placeholder=" "
+                        required
+                        defaultValue={!!editarLista ? editarLista.idade : ""}
+                      />
+                      <label htmlFor="idade" className="label-branco">
+                        Idade
+                      </label>
+                    </div>
+                  </div>
+                </form>
+              </Modal>
+            </div>
+            <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
+              <Link to={"/"}>
+                {" "}
+                <ArrowBigLeft />
+              </Link>
+            </button>
+          </div>
 
-      <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
-        {pessoas.map((x) => (
-          <Listagem key={x.id} textoPrincipal={x.nome} exibir={exibirLista}>
-            <button
-              onClick={() => editarItem(x)}
-              className="hover:scale-110 transition-transform"
-            >
-              <Pencil size={18} />
-            </button>
-            <button
-              onClick={() => removerItem(x.id)}
-              className="hover:scale-110 transition-transform text-red-400"
-            >
-              <Trash size={18} color="black" />
-            </button>
-          </Listagem>
-        ))}
-      </div>
+          <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
+            {pessoas.length === 0 && (
+              <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+                <Blankstate texto="pessoas">
+                  <User size={50}></User>
+                </Blankstate>
+              </div>
+            )}
+            {pessoas.map((x) => (
+              <Listagem key={x.id} textoPrincipal={x.nome}>
+                <button
+                  onClick={() => editarItem(x)}
+                  className="hover:scale-110 transition-transform"
+                >
+                  <Pencil size={18} />
+                </button>
+                <button
+                  onClick={() => removerItem(x.id)}
+                  className="hover:scale-110 transition-transform text-red-400"
+                >
+                  <Trash size={18} color="black" />
+                </button>
+              </Listagem>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>sem pessoas</div>
+      )}
     </>
   );
 }
