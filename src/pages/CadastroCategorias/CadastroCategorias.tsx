@@ -1,162 +1,82 @@
 import { ArrowBigLeft, Calendar } from "lucide-react";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Listagem from "../../components/Listagem/Listagem";
 import Modal from "../../components/Modal/Modal";
 import { toast } from "react-toastify";
-import Dropdown from "../../components/Dropdown/Dropdown";
 import Blankstate from "../../components/Blankstate/Blankstate";
+import { Contexto } from "../../providers/FamilyBudgetProvider";
+import { InfoCategorias } from "../../Interfaces/InfoCategorias";
+import { categoriaService } from "../../services/categoriaService";
 
 function CadastroCategorias() {
-  const [categorias, setCategorias] = useState<InfoCategorias[]>([
-    // {
-    //   id: 1,
-    //   descricao: "Contas de casa",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 2,
-    //   descricao: "Contas de carro",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 3,
-    //   descricao: "Contas de celular",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 4,
-    //   descricao: "Contas de casa",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 5,
-    //   descricao: "Contas de carro",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 6,
-    //   descricao: "Contas de celular",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 7,
-    //   descricao: "Contas de casa",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 8,
-    //   descricao: "Contas de carro",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 9,
-    //   descricao: "Contas de celular",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 10,
-    //   descricao: "Contas de casa",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 11,
-    //   descricao: "Contas de carro",
-    //   Finalidade: "Despesa",
-    // },
-    // {
-    //   id: 12,
-    //   descricao: "Contas de celular",
-    //   Finalidade: "Despesa",
-    // },
-  ]);
+  const { categorias: categorias_list, atualizarCategorias } = useContext(Contexto);
+  const [is_modal_open, set_is_modal_open] = useState(false);
+  const [is_loading, set_is_loading] = useState(false);
+  const descricao_ref = useRef<HTMLInputElement>(null);
+  const finalidade_ref = useRef<HTMLInputElement>(null);
 
-  const [isOpen, setOpenModal] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const descricao = useRef<HTMLInputElement>(null);
-  const finalidade = useRef<HTMLInputElement>(null);
-
-  function retornandoEstado() {
-    setOpenModal(!isOpen);
+  function fechar_modal() {
+    set_is_modal_open(false);
   }
 
-  function cadastro() {
-    const dadosNovos: InfoCategorias = {
-      id: 0,
-      descricao: descricao.current!.value,
-      Finalidade: finalidade.current!.value,
+  async function handle_submit() {
+    const descricao = descricao_ref.current?.value;
+    const finalidade = finalidade_ref.current?.value;
+
+    if (!descricao || !finalidade) {
+      toast.error("Preencha todos os campos!");
+      return;
+    }
+
+    const payload: Omit<InfoCategorias, "id"> = {
+      descricao,
+      finalidade,
     };
 
-    let maiorId = 0;
-    for (let i = 0; i < categorias.length; i++) {
-      if (categorias[i].id > maiorId) {
-        maiorId = categorias[i].id;
-      }
-    }
-    const novoId = maiorId + 1;
-    const categoriaNova: InfoCategorias = { ...dadosNovos, id: novoId };
-
-    console.log(categoriaNova);
-
-    processarCadastro(categoriaNova);
-  }
-
-  const x = () => new Promise((resolve) => setTimeout(resolve, 2000));
-
-  function processarCadastro(dadosNovos: InfoCategorias) {
-    const jaExiste = categorias.some(
-      (x) => x.descricao === dadosNovos.descricao,
+    const ja_existe = categorias_list.some(
+      (c) => c.descricao.toLowerCase() === payload.descricao.toLowerCase()
     );
 
-    console.log(dadosNovos);
+    if (ja_existe) {
+      toast.error("Descrição já cadastrada!");
+      return;
+    }
 
-    if (jaExiste) {
-      toast.error("Descrição/Finalidade já cadastrada!");
-    } else {
-      toast
-        .promise(x, {
-          pending: {
-            render() {
-              setLoading(true);
-              return "Cadastrando...";
-            },
-            icon: false,
-          },
-          success: {
-            render() {
-              setLoading(false);
-              return "Cadastrado com sucesso!";
-            },
-          },
-        })
-        .then(() => {
-          setCategorias((prev) => [...prev, dadosNovos]);
-        });
+    set_is_loading(true);
+
+    try {
+      await categoriaService.create(payload);
+      toast.success("Cadastrado com sucesso!");
+      await atualizarCategorias();
+      fechar_modal();
+    } catch (error) {
+      toast.error("Erro ao cadastrar! 🤯");
+    } finally {
+      set_is_loading(false);
     }
   }
 
   return (
     <>
       <h1 className="text-3xl text-slate-100 font-bold text-center">
-        Cadastro de categorias
+        Cadastro de Categorias
       </h1>
       <div className="flex justify-between text-center mt-5">
         <div className="flex gap-5">
           <button
-            onClick={() => setOpenModal(true)}
+            onClick={() => set_is_modal_open(true)}
             className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
           >
             Criação
           </button>
           <Modal
-            titulo="de categorias"
-            isOpen={isOpen}
+            titulo="de categoria"
+            isOpen={is_modal_open}
             items={null}
-            isLoading={isLoading}
-            onClose={() => retornandoEstado()}
-            SalvarCadastroEdicao={() => {
-              cadastro();
-            }}
+            isLoading={is_loading}
+            onClose={() => fechar_modal()}
+            SalvarCadastroEdicao={() => handle_submit()}
           >
             <form
               className="flex flex-col gap-2 p-4"
@@ -165,41 +85,29 @@ function CadastroCategorias() {
               <div className="flex flex-col gap-4 w-full">
                 <div className="grupo-flutuante">
                   <input
-                    ref={descricao}
+                    ref={descricao_ref}
                     type="text"
-                    id="nome"
+                    id="descricao"
                     className="input-branco"
                     placeholder=" "
                     required
-                    defaultValue={""}
                   />
-                  <label htmlFor="nome" className="label-branco">
+                  <label htmlFor="descricao" className="label-branco">
                     Descrição
                   </label>
                 </div>
                 <div className="grupo-flutuante">
-                  {/* <select>
-                    <option>Selecione a finalidade</option>
-                    <Dropdown items={[]}></Dropdown>
-                  </select> */}
-                  <Dropdown
-                    onChange={() => null}
-                    descricaoModal={["Finalidade"]}
-                    items={categorias}
-                    itemsModal={["Despesa", "Receita", "Ambas"]}
-                  ></Dropdown>
-                  {/* <input
-                    ref={finalidade}
+                  <input
+                    ref={finalidade_ref}
                     type="text"
-                    id="nome"
+                    id="finalidade"
                     className="input-branco"
                     placeholder=" "
                     required
-                    defaultValue={""}
                   />
-                  <label htmlFor="nome" className="label-branco">
+                  <label htmlFor="finalidade" className="label-branco">
                     Finalidade
-                  </label> */}
+                  </label>
                 </div>
               </div>
             </form>
@@ -207,24 +115,23 @@ function CadastroCategorias() {
         </div>
         <button className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors">
           <Link to={"/"}>
-            {" "}
             <ArrowBigLeft />
           </Link>
         </button>
       </div>
 
       <div className="mt-5 overflow-y-auto max-h-[700px] pr-2">
-        {categorias.length === 0 && (
+        {categorias_list.length === 0 && (
           <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
             <Blankstate texto={`categorias`}>
               <Calendar size={50} />
             </Blankstate>
           </div>
         )}
-        {categorias.map((x) => (
+        {categorias_list.map((categoria) => (
           <Listagem
-            key={x.id}
-            textoPrincipal={`${x.descricao} - ${x.Finalidade}`}
+            key={categoria.id}
+            textoPrincipal={`${categoria.descricao} - ${categoria.finalidade}`}
           ></Listagem>
         ))}
       </div>
@@ -233,9 +140,3 @@ function CadastroCategorias() {
 }
 
 export default CadastroCategorias;
-
-export interface InfoCategorias {
-  id: number;
-  descricao: string;
-  Finalidade: string; //dropdown
-}

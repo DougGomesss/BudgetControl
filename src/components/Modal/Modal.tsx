@@ -1,11 +1,11 @@
 import { X } from "lucide-react";
-import "./Modal.scss";
 import { ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { InfoPessoas } from "../../pages/CadastroPessoas/CadastroPessoas";
-import { InfoCategorias } from "../../pages/CadastroCategorias/CadastroCategorias";
-import { InfoTransacoes } from "../../pages/CadastroTransacoes/CadastroTransacoes";
+import { InfoPessoas } from "../../Interfaces/InfoPessoas";
+import { InfoCategorias } from "../../Interfaces/InfoCategorias";
+import { InfoTransacoes } from "../../Interfaces/InfoTransacoes";
+import "./Modal.scss";
 
 interface ModalProps<T> {
   isOpen: boolean;
