@@ -4,7 +4,7 @@ Este projeto é um sistema para gerenciamento de finanças domésticas, permitin
 
 ## 📋 Proposta do Projeto
 
-O objetivo é desenvolver uma aplicação Full Stack (React + .NET) que resolva o problema de organização de gastos em uma residência, garantindo a integridade dos dados e aplicando regras de negócio específicas para cada funcionalidade.
+O objetivo é desenvolver uma aplicação Front end ( React ) que resolva o problema de organização de gastos em uma residência, garantindo a integridade dos dados e aplicando regras de negócio específicas para cada funcionalidade.
 
 ## 🚀 Funcionalidades Principais
 
