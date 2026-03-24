@@ -92,7 +92,7 @@ function CadastroTransacoes() {
             onClick={() => set_is_modal_open(true)}
             className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
           >
-            Criação
+            Cadastrar transação
           </button>
           <Modal
             titulo="de transação"
@@ -152,7 +152,7 @@ function CadastroTransacoes() {
 
                 <Dropdown
                   descricaoDropdown={
-                    categoria_selecionada?.descricao || "Selecione a Categoria"
+                    categoria_selecionada?.finalidade || "Selecione a Categoria"
                   }
                   isDisabled={false}
                 >
@@ -163,7 +163,7 @@ function CadastroTransacoes() {
                       onClick={() => set_categoria_selecionada(cat)}
                       className="w-full text-left bg-gray-800 hover:bg-sky-700 p-2 rounded-md text-white mb-1"
                     >
-                      {cat.descricao}
+                      {cat.finalidade}
                     </button>
                   ))}
                 </Dropdown>

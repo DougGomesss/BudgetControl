@@ -84,7 +84,7 @@ function CadastroPessoas() {
               onClick={() => set_is_modal_open(true)}
               className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
             >
-              Criação
+              Cadastrar pessoa
             </button>
             <Modal
               titulo="de pessoa"

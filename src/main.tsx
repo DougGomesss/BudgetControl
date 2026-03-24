@@ -31,6 +31,10 @@ const router = createBrowserRouter([
         path: "/transações",
         element: <CadastroTransacoes></CadastroTransacoes>,
       },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
 ]);

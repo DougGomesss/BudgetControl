@@ -68,7 +68,7 @@ function CadastroCategorias() {
             onClick={() => set_is_modal_open(true)}
             className="bg-slate-700 text-white p-2 rounded-md hover:bg-slate-600 transition-colors"
           >
-            Criação
+            Cadastrar categoria
           </button>
           <Modal
             titulo="de categoria"

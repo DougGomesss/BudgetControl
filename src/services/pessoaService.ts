@@ -31,11 +31,15 @@ class PessoaService {
     return new_pessoa;
   }
 
+  private getStorageDataTransacoes(): InfoTransacoes[] {
+    const data = localStorage.getItem(MOCK_DATA_KEY_TRANSACOES);
+    return data ? JSON.parse(data) : [];
+  }
+
   async update(id: number, pessoa: InfoPessoas): Promise<InfoPessoas> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const data_transacoes = localStorage.getItem(MOCK_DATA_KEY_TRANSACOES);
-    const transacoes: InfoTransacoes[] = JSON.parse(data_transacoes || "[]");
+    const transacoes = this.getStorageDataTransacoes();
 
     if (transacoes.length > 0) {
       const transacoes_atualizadas = transacoes.map((t) => {
@@ -44,7 +48,10 @@ class PessoaService {
         }
         return t;
       });
-      localStorage.setItem(MOCK_DATA_KEY_TRANSACOES, JSON.stringify(transacoes_atualizadas));
+      localStorage.setItem(
+        MOCK_DATA_KEY_TRANSACOES,
+        JSON.stringify(transacoes_atualizadas),
+      );
     }
 
     const current_data = this.getStorageData();
@@ -55,9 +62,12 @@ class PessoaService {
   }
 
   async delete(id: number): Promise<void> {
+    const transacoes = this.getStorageDataTransacoes();
     await new Promise((resolve) => setTimeout(resolve, 500));
     const current_data = this.getStorageData();
     const filtered_data = current_data.filter((p) => p.id !== id);
+    const filtro = transacoes.filter((t) => t.pessoa.id !== id);
+    localStorage.setItem(MOCK_DATA_KEY_TRANSACOES, JSON.stringify(filtro));
     this.setStorageData(filtered_data);
   }
 }
