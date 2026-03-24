@@ -10,7 +10,8 @@ import { InfoCategorias } from "../../Interfaces/InfoCategorias";
 import { categoriaService } from "../../services/categoriaService";
 
 function CadastroCategorias() {
-  const { categorias: categorias_list, atualizarCategorias } = useContext(Contexto);
+  const { categorias: categorias_list, atualizarCategorias } =
+    useContext(Contexto);
   const [is_modal_open, set_is_modal_open] = useState(false);
   const [is_loading, set_is_loading] = useState(false);
   const descricao_ref = useRef<HTMLInputElement>(null);
@@ -35,7 +36,7 @@ function CadastroCategorias() {
     };
 
     const ja_existe = categorias_list.some(
-      (c) => c.descricao.toLowerCase() === payload.descricao.toLowerCase()
+      (c) => c.descricao.toLowerCase() === payload.descricao.toLowerCase(),
     );
 
     if (ja_existe) {
@@ -49,7 +50,6 @@ function CadastroCategorias() {
       await categoriaService.create(payload);
       toast.success("Cadastrado com sucesso!");
       await atualizarCategorias();
-      fechar_modal();
     } catch (error) {
       toast.error("Erro ao cadastrar! 🤯");
     } finally {

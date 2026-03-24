@@ -13,7 +13,9 @@ function CadastroPessoas() {
   const { usuarios: pessoas_list, atualizarUsuarios } = useContext(Contexto);
   const [is_modal_open, set_is_modal_open] = useState(false);
   const [is_loading, set_is_loading] = useState(false);
-  const [item_para_editar, set_item_para_editar] = useState<InfoPessoas | null>(null);
+  const [item_para_editar, set_item_para_editar] = useState<InfoPessoas | null>(
+    null,
+  );
 
   const nome_ref = useRef<HTMLInputElement>(null);
   const idade_ref = useRef<HTMLInputElement>(null);
@@ -63,7 +65,6 @@ function CadastroPessoas() {
         toast.success("Cadastrado com sucesso!");
       }
       await atualizarUsuarios();
-      fechar_modal();
     } catch (error) {
       toast.error("Erro ao processar! 🤯");
     } finally {

@@ -74,7 +74,6 @@ function CadastroTransacoes() {
       await transacaoService.create(nova_transacao);
       toast.success("Cadastrado com sucesso!");
       await carregarTransacoes();
-      fechar_modal();
     } catch (error) {
       toast.error("Erro ao cadastrar! 🤯");
     } finally {
