@@ -37,7 +37,6 @@ Registro dos movimentos financeiros.
 - **Estilização:** Tailwind CSS e SASS (SCSS) para componentes customizados.
 - **Componentes:** Lucide React (ícones), React-Toastify (notificações) e FontAwesome.
 - **Gerenciamento de Estado:** React Hooks (useState, useRef, useEffect).
-- **Backend (Projetado):** C# com .NET 9 e Entity Framework Core.
 
 ## ⚙️ Comandos do Projeto
 
